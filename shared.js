@@ -416,6 +416,7 @@ checkAndInitDatabase();
 document.addEventListener("DOMContentLoaded", () => {
     applySavedTheme();
     injectSidebarMenu();
+    initMobileMenu();
     
     // Landing theme button hook if present
     const landingThemeBtn = document.getElementById("themeToggleBtn");
@@ -425,3 +426,95 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+
+// --- 6. Mobile Menu Overlay Dynamically Injected ---
+function initMobileMenu() {
+    const header = document.getElementById("landingHeader") || document.querySelector(".landing-header");
+    if (!header) return;
+    if (document.getElementById("mobileMenuBtn")) return;
+
+    // Create the hamburger button
+    const burger = document.createElement("button");
+    burger.id = "mobileMenuBtn";
+    burger.className = "btn btn-secondary";
+    burger.style.cssText = "display: none; padding: 10px; align-items: center; justify-content: center; z-index: 110;";
+    burger.innerHTML = `
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="hamburger-icon">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    `;
+
+    header.appendChild(burger);
+
+    // Create the mobile menu drawer overlay
+    const overlay = document.createElement("div");
+    overlay.id = "mobileMenuOverlay";
+    overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-primary); z-index: 105; display: flex; flex-direction: column; padding: 120px 30px 40px 30px; box-sizing: border-box; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto;";
+
+    // Get links and actions from header to duplicate inside drawer
+    const navLinks = header.querySelectorAll(".landing-nav a");
+    const actionBtns = header.querySelectorAll(".header-actions button, .header-actions a");
+
+    let linksHTML = `<div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">`;
+    navLinks.forEach(link => {
+        const isActive = link.classList.contains("active") ? "color: var(--primary-color); font-weight: 700;" : "color: var(--text-main); font-weight: 500;";
+        linksHTML += `<a href="${link.getAttribute('href')}" style="font-size: 18px; text-decoration: none; ${isActive}">${link.textContent}</a>`;
+    });
+    linksHTML += `</div>`;
+
+    let actionsHTML = `<div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">`;
+    actionBtns.forEach(btn => {
+        if (btn.id === "themeToggleBtn") return;
+        const outerHTML = btn.outerHTML;
+        actionsHTML += outerHTML.replace('class="btn', 'style="width: 100%; text-align: center; justify-content: center; display: flex;" class="btn');
+    });
+    
+    // Add theme toggle inside mobile menu
+    actionsHTML += `
+        <button class="btn btn-secondary" id="mobileThemeToggleBtn" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            Toggle Dark/Light Mode
+        </button>
+    `;
+    actionsHTML += `</div>`;
+
+    overlay.innerHTML = linksHTML + actionsHTML;
+    document.body.appendChild(overlay);
+
+    let isOpen = false;
+    const toggleMenu = () => {
+        isOpen = !isOpen;
+        if (isOpen) {
+            overlay.style.transform = "translateX(0)";
+            burger.innerHTML = `
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="close-icon">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            `;
+            document.body.style.overflow = "hidden";
+        } else {
+            overlay.style.transform = "translateX(100%)";
+            burger.innerHTML = `
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="hamburger-icon">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            `;
+            document.body.style.overflow = "";
+        }
+    };
+
+    burger.addEventListener("click", toggleMenu);
+
+    const mobThemeBtn = document.getElementById("mobileThemeToggleBtn");
+    if (mobThemeBtn) {
+        mobThemeBtn.addEventListener("click", () => {
+            toggleThemeSetting();
+        });
+    }
+}
