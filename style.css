@@ -2612,7 +2612,7 @@ input:checked + .slider:before {
 /* Ensure hero background positions shift to the left side (white space) on mobile and tablet screens */
 @media (max-width: 1024px) {
     .hero-section {
-        background-position: center center !important;
+        background-position: left center !important;
     }
 }
 
