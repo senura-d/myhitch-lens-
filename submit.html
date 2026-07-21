@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Article - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Article Submission</h2>
+                    <p class="view-subtitle">Draft articles, load files, and perform AI quality reviews before submitting.</p>
+                </div>
+                <div class="editor-status">
+                    <span id="draftStatusBadge" class="status-indicator yellow">Draft Saved</span>
+                </div>
+            </div>
+
+            <div class="editor-grid">
+                <!-- Text Editor -->
+                <div class="editor-workspace">
+                    <div class="form-group">
+                        <label for="articleTitle">Article Title</label>
+                        <input type="text" id="articleTitle" class="form-control" placeholder="Enter article headline..." value="The Impact of AI in Modern Supply Chain Operations">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="articleCategory">Category</label>
+                            <select id="articleCategory" class="form-control">
+                                <option value="AI">AI</option>
+                                <option value="Business">Business</option>
+                                <option value="Supply Chain" selected>Supply Chain</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Research">Research</option>
+                                <option value="Community">Community</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="articleType">Content Type</label>
+                            <select id="articleType" class="form-control">
+                                <option value="Blog">Blog Post</option>
+                                <option value="News">News</option>
+                                <option value="Report">Report / Industry Whitepaper</option>
+                                <option value="Research Paper" selected>Research Paper</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Editor Toolbar Mock -->
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn font-bold" onclick="alert('Formatting triggered: Bold')">B</button>
+                        <button class="toolbar-btn font-italic" onclick="alert('Formatting triggered: Italic')">I</button>
+                        <button class="toolbar-btn underline" onclick="alert('Formatting triggered: Underline')">U</button>
+                        <button class="toolbar-btn code" onclick="alert('Formatting triggered: Inline Code')">&lt;&gt;</button>
+                        <button class="toolbar-btn quote" onclick="alert('Formatting triggered: Block Quote')">”</button>
+                        <button class="toolbar-btn link" onclick="alert('Formatting triggered: Anchor Link')" style="display:inline-flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                        <button class="toolbar-btn list-bullet" onclick="alert('Formatting triggered: Bullets')" style="display:inline-flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+                        <div class="toolbar-separator"></div>
+                        <button class="toolbar-btn img" onclick="alert('Asset insertion: Embed Image')" style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Image</button>
+                        <button class="toolbar-btn video" onclick="alert('Asset insertion: Embed Nexus Video')" style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg> Video</button>
+                        <button class="toolbar-btn audio" onclick="alert('Asset insertion: Embed Audio Narration')" style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> Audio</button>
+                    </div>
+
+                    <!-- Text Area -->
+                    <div class="form-group">
+                        <textarea id="articleContent" class="form-control editor-textarea" rows="15" placeholder="Write your publication content here...">The global logistics market is experiencing an unprecedented structural shift. Artificial Intelligence (AI) algorithms are changing how warehouses optimize inventory, predictive route optimization models are curbing carbon emissions, and automated document ingestion is eliminating manual customs clearing friction. 
+
+By analyzing telemetry data, modern supply chains are moving from responsive patterns to predictive modeling, allowing logistics fleets to bypass delays before they occur. 
+
+In this research, we review three main pillars:
+1. Automated forecasting accuracy using deep neural networks.
+2. Multi-tier supplier risk calculations.
+3. Fleet scheduling dynamic overrides.
+
+We conclude that businesses adopting these integrated pipelines realize up to a 14% reductions in inventory carrying costs.</textarea>
+                    </div>
+
+                    <!-- Document Dropzone -->
+                    <div class="upload-dropzone" id="fileDropZone">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <p class="dropzone-text"><strong>Drag & Drop</strong> your Research Word doc or PDF, or <span class="browse-link">browse files</span></p>
+                        <span class="dropzone-subtext">Max size 25MB (Formats: .pdf, .docx, .txt)</span>
+                        <input type="file" id="articleFileInput" class="hidden" accept=".pdf,.docx,.txt">
+                    </div>
+
+                    <div class="editor-actions">
+                        <button class="btn btn-secondary" onclick="saveDraft()">Save Draft</button>
+                        <button class="btn btn-primary" onclick="submitToWorkflow()">Submit for Editorial Review</button>
+                    </div>
+                </div>
+
+                <!-- AI Assistant Floating Sidebar -->
+                <div class="editor-ai-sidebar">
+                    <div class="sidebar-card">
+                        <div class="card-header-ai">
+                            <svg class="ai-stars-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:20px; height:20px; color:#fff;"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/></svg>
+                            <h4>AI Writing Assistant</h4>
+                        </div>
+                        <div class="card-body-ai">
+                            <div class="ai-action-btn-group" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                                <button class="ai-pill-btn" onclick="runAiCheck()" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Grammar & Plagiarism Check</button>
+                                <button class="ai-pill-btn" onclick="generateAiSummary()" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generate Abstract Summary</button>
+                                <button class="ai-pill-btn" onclick="optimizeSeo()" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> SEO & Tag Recommendation</button>
+                                <button class="ai-pill-btn" onclick="runAiTranslation()" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Translate Draft</button>
+                                <button class="ai-pill-btn" onclick="generateVoiceNarration()" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Generate Voice Narration</button>
+                            </div>
+
+                            <!-- Dynamic Output Panel -->
+                            <div class="ai-output-box" id="aiOutputPanel" style="background-color: var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:16px; min-height:180px; font-size:13px;">
+                                <div class="ai-placeholder" style="color:var(--text-muted); text-align:center; padding-top:40px;">
+                                    <p>Select an AI task from the panel above to run optimizations on your draft.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Draft Stats -->
+                    <div class="stats-panel">
+                        <h4>Draft Insights</h4>
+                        <div class="insights-grid">
+                            <div class="insight-stat">
+                                <span class="stat-val" id="wordCount">114</span>
+                                <span class="stat-lbl">Words</span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="stat-val" id="readingTime">1 min</span>
+                                <span class="stat-lbl">Read Time</span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="stat-val" id="plagiarismScore">--</span>
+                                <span class="stat-lbl">Plagiarism</span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="stat-val" id="seoRating">--</span>
+                                <span class="stat-lbl">SEO Score</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        function runAiCheck() {
+            const panel = document.getElementById("aiOutputPanel");
+            panel.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--primary-color); padding-top:20px;">
+                    <p style="font-size:12px;">AI is scanning document patterns...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                panel.innerHTML = `
+                    <div style="font-size:12.5px;">
+                        <h5 class="green" style="margin-bottom:8px; font-weight:700; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> AI Verification Assessment Passed</h5>
+                        <p style="margin-bottom:6px;"><strong>Plagiarism Scan:</strong> 99.4% Unique content (0.6% standard technical phrases matched).</p>
+                        <p style="margin-bottom:6px;"><strong>Grammar & Style:</strong> 0 alerts. Readability rating fits target demographics.</p>
+                    </div>
+                `;
+                document.getElementById("plagiarismScore").textContent = "99.4%";
+                document.getElementById("plagiarismScore").className = "stat-val green";
+            }, 1000);
+        }
+
+        function generateAiSummary() {
+            const text = document.getElementById("articleContent").value;
+            const panel = document.getElementById("aiOutputPanel");
+            panel.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--primary-color); padding-top:20px;">
+                    <p style="font-size:12px;">AI summarizing draft body...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                panel.innerHTML = `
+                    <div style="font-size:12.5px;">
+                        <h5 style="color:var(--primary-color); margin-bottom:8px; font-weight:700; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> AI Generated Abstract Summary</h5>
+                        <p style="font-style: italic; background-color:var(--bg-secondary); padding:8px; border-radius:6px; border:1px solid var(--border-color); margin-bottom:10px;">
+                            "This paper reviews key transformations inside modern logistics corridors, discussing forecasting networks, risk indexing, and carbon emission reductions."
+                        </p>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        function optimizeSeo() {
+            const panel = document.getElementById("aiOutputPanel");
+            panel.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--primary-color); padding-top:20px;">
+                    <p style="font-size:12px;">AI executing semantic search analysis...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                panel.innerHTML = `
+                    <div style="font-size:12.5px;">
+                        <h5 class="green" style="margin-bottom:8px; font-weight:700; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> SEO Analytics Optimization</h5>
+                        <p style="margin-bottom:6px;"><strong>Suggested Title:</strong> "Leveraging Predictive AI in Global Supply Chain Clusters" (increases search index rating by +18%)</p>
+                        <p style="margin-bottom:8px;"><strong>Recommended Keywords tags:</strong> <span class="badge badge-accent">AI Logistics</span> <span class="badge badge-accent">Supply Chain</span></p>
+                        <p><strong>Readability Index:</strong> 85/100 (Excellent for Executive teams).</p>
+                    </div>
+                `;
+                document.getElementById("seoRating").textContent = "A+";
+                document.getElementById("seoRating").className = "stat-val green";
+            }, 1000);
+        }
+
+        function runAiTranslation() {
+            const panel = document.getElementById("aiOutputPanel");
+            panel.innerHTML = `
+                <div style="font-size:12.5px;">
+                    <h5 style="color:var(--accent-color); margin-bottom:12px; font-weight:700; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Translate Document Draft</h5>
+                    <div class="form-group">
+                        <label>Target Language</label>
+                        <select class="form-control-sm" id="translateLangSelector">
+                            <option value="es">Spanish (Español)</option>
+                            <option value="fr">French (Français)</option>
+                            <option value="de">German (Deutsch)</option>
+                            <option value="zh">Chinese (中文)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-full" onclick="executeTranslationAction()">Translate Now</button>
+                </div>
+            `;
+        }
+
+        function executeTranslationAction() {
+            const sel = document.getElementById("translateLangSelector");
+            const lang = sel.options[sel.selectedIndex].text;
+            const panel = document.getElementById("aiOutputPanel");
+            panel.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--primary-color); padding-top:20px;">
+                    <p style="font-size:12px;">Translating entire corpus into ${lang}...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                panel.innerHTML = `
+                    <div style="font-size:12.5px;">
+                        <h5 class="green" style="margin-bottom:8px; font-weight:700; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Draft Translation Completed</h5>
+                        <p style="margin-bottom:8px; font-style:italic; font-size:12px; padding:6px; background-color:var(--bg-secondary); border-radius:4px; border:1px solid var(--border-color);">
+                            "Las operaciones logísticas globales están experimentando un cambio estructural sin precedentes..."
+                        </p>
+                    </div>
+                `;
+            }, 1200);
+        }
+
+        function generateVoiceNarration() {
+            const panel = document.getElementById("aiOutputPanel");
+            panel.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--primary-color); padding-top:20px;">
+                    <p style="font-size:12px;">AI voice synthesis is generating audio variant...</p>
+                </div>
+            `;
+            setTimeout(() => {
+                panel.innerHTML = `
+                    <div style="font-size:12.5px;">
+                        <h5 class="green" style="margin-bottom:8px; font-weight:700; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> AI Voice Narration Generated</h5>
+                        <p style="margin-bottom:10px;">Audio waveform synthesized successfully using <strong>Neural Voice: Male Accent 2</strong>.</p>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        function saveDraft() {
+            const title = document.getElementById("articleTitle").value;
+            const badge = document.getElementById("draftStatusBadge");
+            badge.textContent = "Saving...";
+            setTimeout(() => {
+                badge.textContent = "Draft Saved";
+                alert(`"${title}" saved successfully to drafts list.`);
+            }, 500);
+        }
+
+        function submitToWorkflow() {
+            const title = document.getElementById("articleTitle").value;
+            const body = document.getElementById("articleContent").value;
+            const category = document.getElementById("articleCategory").value;
+            const type = document.getElementById("articleType").value;
+            
+            if (title.trim() === "" || body.trim() === "") {
+                alert("Please fill in the headline and article body.");
+                return;
+            }
+
+            let queue = getQueue();
+            const newSubmission = {
+                id: "rev-" + Date.now(),
+                title: title,
+                author: getUserName(),
+                authorRank: getUserRole() === "author" ? "Silver Contributor" : "Contributor",
+                category: category,
+                type: type,
+                submittedDate: "2026-07-20 " + new Date().toTimeString().split(' ')[0].substring(0, 5),
+                aiScore: Math.floor(Math.random() * 10) + 89, // 89-99
+                plagiarism: "0.4% detected",
+                readability: "Good (Flesch: 65)",
+                sentiment: "Highly Analytical",
+                content: body
+            };
+
+            queue.push(newSubmission);
+            saveQueue(queue);
+
+            // Add alert notification
+            let notifies = getNotifications();
+            notifies.unshift({
+                id: Date.now(),
+                type: "system",
+                date: "Just now",
+                text: `Submitted "${title}" for editorial vetting.`
+            });
+            saveNotifications(notifies);
+
+            alert(`"${title}" successfully submitted to the review queue!\nRedirecting to portfolio...`);
+            window.location.href = "author-dashboard.html";
+        }
+
+        // File upload dropzone listeners
+        window.addEventListener("DOMContentLoaded", () => {
+            const dropzone = document.getElementById("fileDropZone");
+            const fileInput = document.getElementById("articleFileInput");
+
+            dropzone.addEventListener("click", () => fileInput.click());
+            fileInput.addEventListener("change", (e) => {
+                if (e.target.files.length > 0) {
+                    const f = e.target.files[0];
+                    document.getElementById("articleTitle").value = f.name.replace(/\.[^/.]+$/, "").split('_').join(' ').replace(/\b\w/g, c => c.toUpperCase());
+                    document.getElementById("articleContent").value = `[PARSED RESEARCH CORPUS: ${f.name}]\nDocument parsed and structured successfully via PDF/Word telemetry parser modules.\n\nType findings here or click AI tools to run assessments...`;
+                    alert(`Parsed file: ${f.name}!`);
+                }
+            });
+
+            // Live word counters
+            const txt = document.getElementById("articleContent");
+            txt.addEventListener("input", (e) => {
+                const words = e.target.value.trim().split(/\s+/).filter(w => w !== "").length;
+                document.getElementById("wordCount").textContent = words;
+                document.getElementById("readingTime").textContent = Math.max(1, Math.ceil(words / 150)) + " min";
+            });
+        });
+    </script>
+</body>
+</html>

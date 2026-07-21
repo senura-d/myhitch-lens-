@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Detail - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <button class="btn btn-secondary btn-sm" onclick="window.history.back()" style="margin-bottom:20px;">
+                ← Back
+            </button>
+
+            <div class="review-details-panel" id="articleDetailCard" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius:12px; padding:32px;">
+                <!-- Dynamically loaded by script -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        let activeArt = null;
+        let audioPlaying = false;
+        let audioProgressPercent = 0;
+        let audioInterval = null;
+
+        function loadArticleDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const list = getArticles();
+            activeArt = list.find(a => a.id === id);
+
+            if (!activeArt) {
+                document.getElementById("articleDetailCard").innerHTML = `
+                    <div style="text-align:center; padding:40px; color:var(--text-muted);">
+                        <p>Publication not found. It may have been archived or retracted.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const bookmarks = getBookmarks();
+            const bookmarked = bookmarks.includes(activeArt.id);
+
+            const detailPanel = document.getElementById("articleDetailCard");
+            detailPanel.innerHTML = `
+                <div class="modal-header" style="border:none; padding:0; margin-bottom: 24px;">
+                    <span class="modal-category" style="font-size:11px; font-weight:700; color:var(--primary-color); text-transform:uppercase;">${activeArt.category}</span>
+                </div>
+                
+                <h2 class="modal-title" style="font-size: 28px; line-height: 1.3; margin-bottom: 16px;">${activeArt.title}</h2>
+                
+                <div class="modal-author-bar" style="margin-bottom: 24px; display:flex; align-items:center; background-color: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px 18px; border-radius: 8px;">
+                    <div class="modal-avatar" style="width:32px; height:32px; border-radius:50%; background-color: var(--primary-color); color:var(--text-inverse); font-weight:700; display:flex; align-items:center; justify-content:center; margin-right:12px;">${activeArt.author.charAt(0)}</div>
+                    <div class="modal-author-info" style="flex:1; display:flex; flex-direction:column;">
+                        <span class="modal-author-name" style="font-size:13.5px; font-weight:600;">${activeArt.author}</span>
+                        <span class="modal-author-rank" style="font-size:11px; color:var(--text-muted);">${activeArt.authorRank}</span>
+                    </div>
+                    <div class="modal-actions-right" style="display:flex; gap:8px;">
+                        <button class="btn-bookmark ${bookmarked ? 'active' : ''}" id="bookmarkBtn" onclick="toggleBookmarkAction()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        </button>
+                        <button class="btn-like ${activeArt.liked ? 'active' : ''}" id="likeBtn" onclick="toggleLikeAction()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <span id="likeCount">${activeArt.likes}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audio Narration player -->
+                <div class="audio-narration-widget" style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 24px; display:flex; flex-direction:column; gap:10px;">
+                    <div class="audio-controls" style="display:flex; justify-content:space-between; align-items:center;">
+                        <button class="btn-audio-play" id="audioPlayBtn" onclick="toggleAudio()" style="background-color:var(--primary-color); color:var(--text-inverse); border:none; padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">▶ Play AI Voice Narration</button>
+                        <span class="audio-time" id="audioTime">0:00 / 2:34</span>
+                    </div>
+                    <div class="audio-progress" style="height:4px; background-color: var(--bg-tertiary); border-radius:2px; overflow:hidden;">
+                        <div class="audio-progress-bar" id="audioProgress" style="width: 0%; height:100%; background-color: var(--primary-color); transition:width 0.1s linear;"></div>
+                    </div>
+                </div>
+
+                <!-- Content text -->
+                <div class="modal-text-content" style="font-size:15.5px; line-height:1.8; color:var(--text-main); margin-bottom:32px; white-space:pre-wrap;">
+                    ${activeArt.content.split('\n').map(p => {
+                        if (p.trim().startsWith('•') || p.trim().startsWith('1.')) {
+                            return `<p style="margin-left: 20px; font-weight:500;">${p}</p>`;
+                        }
+                        return `<p style="margin-bottom:16px;">${p}</p>`;
+                    }).join('')}
+                </div>
+
+                <!-- Integrated MYHitch Ecosystem widgets -->
+                <div class="modal-integrations-footer" id="articleIntegrationsContainer" style="border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 24px 0; margin-bottom:32px; display:flex; flex-direction:column; gap:16px;">
+                    <!-- Connected widgets injected by renderIntegrations -->
+                </div>
+
+                <!-- Comments Board -->
+                <div class="modal-comments-section">
+                    <h3 style="font-size: 16px; margin-bottom: 16px;">Discussion (<span id="commentsCount">${activeArt.comments.length}</span>)</h3>
+                    <div class="add-comment-box" style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
+                        <textarea id="commentText" class="form-control" rows="2" placeholder="Join the discussion under verified guidelines..."></textarea>
+                        <button class="btn btn-primary btn-sm" onclick="postComment()" style="align-self:flex-start;">Post Comment</button>
+                    </div>
+                    <div class="comments-list" id="commentsList">
+                        <!-- Comments injected -->
+                    </div>
+                </div>
+            `;
+            
+            renderIntegrations(activeArt);
+            renderCommentsBoard(activeArt.comments);
+        }
+
+        function toggleBookmarkAction() {
+            let bookmarks = getBookmarks();
+            const idx = bookmarks.indexOf(activeArt.id);
+            if (idx !== -1) {
+                bookmarks.splice(idx, 1);
+            } else {
+                bookmarks.push(activeArt.id);
+            }
+            saveBookmarks(bookmarks);
+            
+            const btn = document.getElementById("bookmarkBtn");
+            btn.className = "btn-bookmark" + (bookmarks.includes(activeArt.id) ? " active" : "");
+        }
+
+        function toggleLikeAction() {
+            let list = getArticles();
+            const artRef = list.find(a => a.id === activeArt.id);
+            
+            activeArt.liked = !activeArt.liked;
+            if (activeArt.liked) {
+                activeArt.likes++;
+            } else {
+                activeArt.likes--;
+            }
+            
+            // Sync database
+            artRef.liked = activeArt.liked;
+            artRef.likes = activeArt.likes;
+            saveArticles(list);
+            
+            document.getElementById("likeCount").textContent = activeArt.likes;
+            const btn = document.getElementById("likeBtn");
+            btn.className = "btn-like" + (activeArt.liked ? " active" : "");
+        }
+
+        function toggleAudio() {
+            const btn = document.getElementById("audioPlayBtn");
+            const progress = document.getElementById("audioProgress");
+            const timeEl = document.getElementById("audioTime");
+
+            if (audioPlaying) {
+                audioPlaying = false;
+                clearInterval(audioInterval);
+                btn.textContent = "▶ Play AI Voice Narration";
+            } else {
+                audioPlaying = true;
+                btn.textContent = "⏸ Pause AI Voice Narration";
+                audioInterval = setInterval(() => {
+                    audioProgressPercent += 2;
+                    progress.style.width = audioProgressPercent + "%";
+
+                    const durationSecs = 154; // 2m 34s
+                    const curSecs = Math.floor((audioProgressPercent / 100) * durationSecs);
+                    const m = Math.floor(curSecs / 60);
+                    const s = curSecs % 60;
+                    timeEl.textContent = `${m}:${s < 10 ? '0' : ''}${s} / 2:34`;
+
+                    if (audioProgressPercent >= 100) {
+                        audioPlaying = false;
+                        clearInterval(audioInterval);
+                        audioProgressPercent = 0;
+                        progress.style.width = "0%";
+                        timeEl.textContent = "0:00 / 2:34";
+                        btn.textContent = "▶ Play AI Voice Narration";
+                    }
+                }, 300);
+            }
+        }
+
+        function renderIntegrations(art) {
+            const container = document.getElementById("articleIntegrationsContainer");
+            container.innerHTML = "";
+            const keys = getIntegrations();
+            let count = 0;
+
+            if (keys.services) {
+                count++;
+                const box = document.createElement("div");
+                box.className = "widget-box";
+                box.innerHTML = `
+                    <div class="widget-details" style="display:flex; align-items:center; gap:12px;">
+                        <span class="widget-logo" style="font-size:20px; display:inline-flex; align-items:center;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+                        <div>
+                            <h5 class="widget-title" style="font-size:13.5px; font-weight:600;">Connect with ${art.author}</h5>
+                            <p class="widget-desc" style="font-size:11.5px; color:var(--text-muted);">Request consulting on topics involving ${art.category} and related operations.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="alert('Routing to scheduling calendar for ${art.author}... (Simulated)')">Book Consultation</button>
+                `;
+                container.appendChild(box);
+            }
+
+            if (keys.mart && (art.category === "Supply Chain" || art.category === "AI" || art.category === "Technology")) {
+                count++;
+                const box = document.createElement("div");
+                box.className = "widget-box";
+                box.innerHTML = `
+                    <div class="widget-details" style="display:flex; align-items:center; gap:12px;">
+                        <span class="widget-logo" style="font-size:20px; display:inline-flex; align-items:center;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
+                        <div>
+                            <h5 class="widget-title" style="font-size:13.5px; font-weight:600;">Recommended Procurement Products</h5>
+                            <p class="widget-desc" style="font-size:11.5px; color:var(--text-muted);">Mentioned Hardware, Telemetry Sensors, and Cloud API listings on MYHitch Mart.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="alert('Displaying 3 verified hardware modules found in text (Sandbox)...')">Open Mart Links</button>
+                `;
+                container.appendChild(box);
+            }
+
+            if (keys.travel && art.category === "Travel") {
+                count++;
+                const box = document.createElement("div");
+                box.className = "widget-box";
+                box.innerHTML = `
+                    <div class="widget-details" style="display:flex; align-items:center; gap:12px;">
+                        <span class="widget-logo" style="font-size:20px; display:inline-flex; align-items:center;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span>
+                        <div>
+                            <h5 class="widget-title" style="font-size:13.5px; font-weight:600;">JetNRest SAF Travel Search</h5>
+                            <p class="widget-desc" style="font-size:11.5px; color:var(--text-muted);">Search carbon-offset airline bookings directly to author's research hubs.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="alert('Launching flight lookup modal (Simulated SAF paths)...')">Compare SAF Flights</button>
+                `;
+                container.appendChild(box);
+            }
+
+            if (keys.donations) {
+                count++;
+                const box = document.createElement("div");
+                box.className = "widget-box";
+                box.innerHTML = `
+                    <div class="widget-details" style="display:flex; align-items:center; gap:12px;">
+                        <span class="widget-logo" style="font-size:20px; display:inline-flex; align-items:center;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+                        <div>
+                            <h5 class="widget-title" style="font-size:13.5px; font-weight:600;">Support ${art.author}'s Research</h5>
+                            <p class="widget-desc" style="font-size:11.5px; color:var(--text-muted);">Send micro-grants directly via securely connected wallets.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="alert('Connecting web3 wallet gateway... (Simulated)')">Send Micro-grant</button>
+                `;
+                container.appendChild(box);
+            }
+
+            if (count === 0) {
+                container.style.display = "none";
+            }
+        }
+
+        function renderCommentsBoard(cList) {
+            const list = document.getElementById("commentsList");
+            list.innerHTML = "";
+            if (cList.length === 0) {
+                list.innerHTML = `<p style="font-size:12.5px; color:var(--text-muted); text-align:center; padding:12px;">No comments yet. Be the first to start the discussion.</p>`;
+                return;
+            }
+
+            cList.forEach(c => {
+                const item = document.createElement("div");
+                item.className = "comment-item";
+                item.style.marginBottom = "12px";
+                item.innerHTML = `
+                    <div class="comment-header" style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:8px;">
+                        <span class="commenter-name" style="font-weight:600;">${c.name}</span>
+                        <span class="comment-date" style="color:var(--text-muted);">${c.date}</span>
+                    </div>
+                    <p class="comment-body" style="font-size:13px; color:var(--text-main);">${c.text}</p>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function postComment() {
+            const textarea = document.getElementById("commentText");
+            const text = textarea.value.trim();
+            if (text === "") return;
+
+            const name = getUserName();
+            const role = getUserRole();
+            
+            const newComment = {
+                name: `${name} (${role.toUpperCase()})`,
+                date: "Just now",
+                text: text
+            };
+
+            activeArt.comments.push(newComment);
+            
+            // Sync DB
+            let list = getArticles();
+            const ref = list.find(a => a.id === activeArt.id);
+            ref.comments.push(newComment);
+            saveArticles(list);
+
+            textarea.value = "";
+            document.getElementById("commentsCount").textContent = activeArt.comments.length;
+            renderCommentsBoard(activeArt.comments);
+        }
+
+        window.addEventListener("DOMContentLoaded", loadArticleDetails);
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosystem Integrations - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">MYHitch Ecosystem Integrations</h2>
+                    <p class="view-subtitle">Toggle API modules to dynamically append product widgets and actions into your reader's article views.</p>
+                </div>
+            </div>
+
+            <!-- Integrations Deck Grid -->
+            <div class="articles-grid" id="integrationsGrid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+                <!-- Injected dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        const integrationModules = [
+            { key: "mart", name: "MYHitch Mart Procurement", icon: `<svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`, desc: "Scan article texts and automatically display procurement product listings for logistics, hardware, or software components." },
+            { key: "services", name: "Scheduler & Consulting", icon: `<svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`, desc: "Append appointment widgets enabling readers to book consultations or contracting opportunities directly with vetted authors." },
+            { key: "travel", name: "JetNRest SAF Bookings", icon: `<svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`, desc: "Embed carbon-offset flight schedules and Sustainable Aviation Fuel (SAF) procurement options inside travel publications." },
+            { key: "donations", name: "Research Micro-grants", icon: `<svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`, desc: "Support academic and industry research by enabling micro-donation modules linked to web3 wallets." },
+            { key: "events", name: "Pass Event Summons", icon: `<svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`, desc: "Inject ticket checkout elements for connected industry conferences, webinars, and vetting panels." },
+            { key: "videos", name: "Nexus Explainer Streams", icon: `<svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>`, desc: "Embed short explainer videos or technical webinar broadcasts to supplement text summaries." }
+        ];
+
+        function renderIntegrationsList() {
+            const grid = document.getElementById("integrationsGrid");
+            grid.innerHTML = "";
+            const current = getIntegrations();
+
+            integrationModules.forEach(mod => {
+                const isEnabled = current[mod.key] === true;
+                const card = document.createElement("div");
+                card.className = "category-card";
+                card.style.alignItems = "flex-start";
+                card.style.textAlign = "left";
+                card.style.padding = "24px";
+                card.style.cursor = "default";
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:12px;">
+                        <span style="display:inline-flex; align-items:center; justify-content:center;">${mod.icon}</span>
+                        <button class="btn ${isEnabled ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="toggleMod('${mod.key}')" style="display:inline-flex; align-items:center; gap:4px;">
+                            ${isEnabled ? '<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12"/></svg> Connected' : 'Connect'}
+                        </button>
+                    </div>
+                    <span class="category-card-title" style="font-size:16px; font-weight:700; margin-bottom:6px;">${mod.name}</span>
+                    <p class="category-card-desc" style="font-size:12px; color:var(--text-muted); line-height:1.5; flex:1;">${mod.desc}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleMod(key) {
+            let current = getIntegrations();
+            current[key] = !current[key];
+            saveIntegrations(current);
+            renderIntegrationsList();
+
+            // Notify
+            let notifies = getNotifications();
+            notifies.unshift({
+                id: Date.now(),
+                type: "system",
+                date: "Just now",
+                text: `Integration module '${key}' ${current[key] ? 'enabled' : 'disabled'}.`
+            });
+            saveNotifications(notifies);
+        }
+
+        window.addEventListener("DOMContentLoaded", renderIntegrationsList);
+    </script>
+</body>
+</html>

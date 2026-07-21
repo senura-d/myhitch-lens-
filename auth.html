@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vetting Authentication - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme" style="display:flex; align-items:center; justify-content:center; min-height:100vh; background-color: var(--bg-secondary);">
+
+    <div class="modal-wrapper" style="max-width: 440px; position:static; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); background-color:var(--bg-primary);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding: 20px;">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer; display: inline-flex; align-items: center; width: 100%; justify-content: center;">
+            <img src="public/logo.jpeg" alt="MYHitch Lens" style="height: 80px; max-height: 80px; object-fit: contain; vertical-align: middle; border-radius: 4px;">
+        </div>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+            <div style="display:flex; justify-content:space-around; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                <button class="toolbar-btn active" id="btnTabSignin" onclick="toggleTab('signin')" style="font-weight:700; color:var(--primary-color);">Sign In</button>
+                <button class="toolbar-btn" id="btnTabSignup" onclick="toggleTab('signup')" style="font-weight:500; color:var(--text-muted);">Sign Up</button>
+            </div>
+
+            <!-- Fast preset selectors for easy grading/testing -->
+            <div id="presetsBox">
+                <p style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:8px;">Fast Vetting Simulators:</p>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+                    <button class="ai-pill-btn" onclick="selectPreset('reader')" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="var(--primary-color)" stroke="none" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg> Sign in as Markus Green (Reader)</button>
+                    <button class="ai-pill-btn" onclick="selectPreset('author')" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="#2da4df" stroke="none" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg> Sign in as Dr. Sarah Chen (Author)</button>
+                    <button class="ai-pill-btn" onclick="selectPreset('editor')" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="#e28743" stroke="none" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg> Sign in as Chief Editor Vance (Editor)</button>
+                </div>
+                <div style="text-align:center; margin-bottom:16px; font-size:12px; color:var(--text-muted); position:relative;">
+                    <span style="background:var(--bg-primary); padding:0 8px; z-index:1; position:relative;">or enter credentials</span>
+                    <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:var(--border-color); z-index:0;"></div>
+                </div>
+            </div>
+
+            <form id="authForm" onsubmit="handleFormSubmit(event)" style="display:flex; flex-direction:column; gap:12px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="authUsername">Username / ID</label>
+                    <input type="text" id="authUsername" class="form-control-sm" placeholder="Enter username..." value="sarah_chen" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="authPassword">Password</label>
+                    <input type="password" id="authPassword" class="form-control-sm" placeholder="••••••••" value="password123" required>
+                </div>
+                <div class="form-group hidden" id="authRoleContainer" style="margin-bottom:0;">
+                    <label for="authRole">Select Role Profile</label>
+                    <select id="authRole" class="form-control-sm">
+                        <option value="reader">Reader Profile</option>
+                        <option value="author" selected>Author (Premium)</option>
+                        <option value="editor">Editor (Compliance Admin)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-full" id="btnAuthSubmit" style="margin-top:8px;">Sign In</button>
+            </form>
+            
+            <div style="text-align:center; margin-top:20px; font-size:12px;">
+                <a href="#" style="color: var(--primary-color);" onclick="alert('Password reset link sent to registered email! (Simulated)')">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core persistent script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        // Check query parameters to set initial state
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode') || 'signin';
+        const initialRole = urlParams.get('role') || 'author';
+
+        // Toggle state helpers
+        function toggleTab(tab) {
+            const btnSignin = document.getElementById("btnTabSignin");
+            const btnSignup = document.getElementById("btnTabSignup");
+            const presets = document.getElementById("presetsBox");
+            const roleBox = document.getElementById("authRoleContainer");
+            const submitBtn = document.getElementById("btnAuthSubmit");
+
+            if (tab === 'signin') {
+                btnSignin.classList.add("active");
+                btnSignin.style.color = "var(--primary-color)";
+                btnSignup.classList.remove("active");
+                btnSignup.style.color = "var(--text-muted)";
+                presets.classList.remove("hidden");
+                roleBox.classList.add("hidden");
+                submitBtn.textContent = "Sign In Vetted Profile";
+            } else {
+                btnSignup.classList.add("active");
+                btnSignup.style.color = "var(--primary-color)";
+                btnSignin.classList.remove("active");
+                btnSignin.style.color = "var(--text-muted)";
+                presets.classList.add("hidden");
+                roleBox.classList.remove("hidden");
+                submitBtn.textContent = "Create Vetted Account";
+            }
+        }
+
+        function selectPreset(role) {
+            const userEl = document.getElementById("authUsername");
+            const passEl = document.getElementById("authPassword");
+            const roleEl = document.getElementById("authRole");
+
+            if (role === 'reader') {
+                userEl.value = "markus_green";
+                passEl.value = "password99";
+                roleEl.value = "reader";
+            } else if (role === 'author') {
+                userEl.value = "sarah_chen";
+                passEl.value = "password123";
+                roleEl.value = "author";
+            } else if (role === 'editor') {
+                userEl.value = "editor_vance";
+                passEl.value = "boss_editor";
+                roleEl.value = "editor";
+            }
+
+            document.getElementById("btnAuthSubmit").click();
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const user = document.getElementById("authUsername").value.trim();
+            const role = document.getElementById("authRole").value;
+
+            // Save credentials to local session
+            setUserRole(role);
+            
+            if (role === 'reader') {
+                setUserName("Markus Green");
+            } else if (role === 'author') {
+                setUserName("Dr. Sarah Chen");
+            } else if (role === 'editor') {
+                setUserName("Chief Editor Vance");
+            } else {
+                setUserName(user);
+            }
+
+            // Injected login notifications
+            let notificationsList = getNotifications();
+            notificationsList.unshift({
+                id: Date.now(),
+                type: "system",
+                date: "Just now",
+                text: `Successfully authenticated: ${user} in ${role} mode.`
+            });
+            saveNotifications(notificationsList);
+
+            alert(`Vetting Complete!\nWelcome, ${getUserName()} (${role.toUpperCase()} profile).`);
+
+            // Route to dashboard
+            if (role === 'reader') {
+                window.location.href = "reader-dashboard.html";
+            } else if (role === 'author') {
+                window.location.href = "author-dashboard.html";
+            } else if (role === 'editor') {
+                window.location.href = "editorial.html";
+            }
+        }
+
+        // Apply URL params on boot
+        window.addEventListener("DOMContentLoaded", () => {
+            toggleTab(mode);
+            document.getElementById("authRole").value = initialRole;
+        });
+    </script>
+</body>
+</html>

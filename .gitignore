@@ -1,0 +1,15 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.pyc
+
+# System / IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.agents/
+.gemini/

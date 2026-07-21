@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Feed - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Knowledge Feed</h2>
+                    <p class="view-subtitle">Trusted research papers, reports, news, and blogs.</p>
+                </div>
+                <div class="feed-search">
+                    <input type="text" id="feedSearchInput" placeholder="Search title, keywords, authors...">
+                </div>
+            </div>
+
+            <!-- Category Pills -->
+            <div class="category-scroll">
+                <button class="category-tag active" data-category="All">All Categories</button>
+                <button class="category-tag" data-category="AI">AI</button>
+                <button class="category-tag" data-category="Business">Business</button>
+                <button class="category-tag" data-category="Supply Chain">Supply Chain</button>
+                <button class="category-tag" data-category="Technology">Technology</button>
+                <button class="category-tag" data-category="Healthcare">Healthcare</button>
+                <button class="category-tag" data-category="Education">Education</button>
+                <button class="category-tag" data-category="Travel">Travel</button>
+                <button class="category-tag" data-category="Finance">Finance</button>
+                <button class="category-tag" data-category="Research">Research</button>
+                <button class="category-tag" data-category="Community">Community</button>
+            </div>
+
+            <!-- Articles Grid -->
+            <div class="articles-grid" id="feedArticlesGrid">
+                <!-- Injected dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        let selectedCategory = "All";
+
+        // Read query category parameter if routed from categories page
+        const urlParams = new URLSearchParams(window.location.search);
+        const routeCat = urlParams.get('category');
+        if (routeCat) {
+            selectedCategory = routeCat;
+        }
+
+        function renderFeed() {
+            const query = document.getElementById("feedSearchInput").value.toLowerCase();
+            const grid = document.getElementById("feedArticlesGrid");
+            grid.innerHTML = "";
+
+            let allArt = getArticles();
+            let filtered = allArt;
+
+            if (selectedCategory !== "All") {
+                filtered = filtered.filter(a => a.category.toLowerCase() === selectedCategory.toLowerCase());
+            }
+
+            if (query !== "") {
+                filtered = filtered.filter(a => 
+                    a.title.toLowerCase().includes(query) ||
+                    a.author.toLowerCase().includes(query) ||
+                    a.summary.toLowerCase().includes(query)
+                );
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">No verified articles match this search.</p>`;
+                return;
+            }
+
+            filtered.forEach(art => {
+                const card = document.createElement("div");
+                card.className = "article-card";
+                card.onclick = () => {
+                    window.location.href = `article.html?id=${art.id}`;
+                };
+                card.innerHTML = `
+                    <div class="acard-meta">
+                        <span class="acard-category">${art.category}</span>
+                        <span class="acard-type">${art.type}</span>
+                    </div>
+                    <h3 class="acard-title">${art.title}</h3>
+                    <p class="acard-summary">${art.summary}</p>
+                    <div class="acard-footer">
+                        <div class="author-chip">
+                            <div class="author-avatar">${art.author.charAt(0)}</div>
+                            <div class="author-details">
+                                <span class="author-name">${art.author}</span>
+                                ${art.verified ? '<span class="verified-badge" style="display:inline-flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="acard-stats" style="display:flex; align-items:center; gap:12px;">
+                            <span style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> ${art.likes}</span>
+                            <span style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${art.readTime.split(' ')[0]}m</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Highlight tags on start
+        window.addEventListener("DOMContentLoaded", () => {
+            const tags = document.querySelectorAll(".category-tag");
+            tags.forEach(tag => {
+                if (tag.dataset.category === selectedCategory) {
+                    tag.classList.add("active");
+                } else {
+                    tag.classList.remove("active");
+                }
+                
+                tag.addEventListener("click", () => {
+                    tags.forEach(t => t.classList.remove("active"));
+                    tag.classList.add("active");
+                    selectedCategory = tag.dataset.category;
+                    renderFeed();
+                });
+            });
+
+            document.getElementById("feedSearchInput").addEventListener("input", renderFeed);
+            renderFeed();
+        });
+    </script>
+</body>
+</html>

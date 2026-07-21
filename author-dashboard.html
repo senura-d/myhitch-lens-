@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Portfolio - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Author Portfolio Studio</h2>
+                    <p class="view-subtitle">Manage credentials, review subscriber earnings, and monitor published assets.</p>
+                </div>
+            </div>
+
+            <!-- Profile header card -->
+            <div class="user-profile-widget" style="padding: 20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <div class="user-avatar" style="width:50px; height:50px; font-size:20px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);">S</div>
+                    <div>
+                        <h3 style="font-size:18px;">Dr. Sarah Chen <span class="verified-badge" style="font-size:12px; display:inline-flex; align-items:center; gap:2px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12"/></svg> Verified Vetted Author</span></h3>
+                        <p style="font-size:12px; color:var(--text-muted);">Contributor Rank: <span class="green" style="font-weight:700;">#42 (Gold tier status)</span> • Expertise: Supply Chain Operations, AI Logistics</p>
+                    </div>
+                </div>
+                <div>
+                    <span class="badge badge-accent" style="padding:6px 12px; font-size:12px;">Premium Contributor Account</span>
+                </div>
+            </div>
+
+            <div class="editor-grid">
+                <!-- Portfolio feed -->
+                <div class="editor-workspace">
+                    <h3 style="font-size: 16px; margin-bottom: 16px;">My Publications Portfolio</h3>
+                    <div class="articles-grid" id="portfolioGrid">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Earnings sidebar card -->
+                <div class="editor-ai-sidebar">
+                    <div class="stats-panel">
+                        <h4>Monetization Intake</h4>
+                        <div style="margin-top: 10px; display:flex; flex-direction:column; gap:16px;">
+                            <div>
+                                <span class="stat-lbl">Accumulated Earnings</span>
+                                <span class="stat-val green">$2,140.50</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-color); padding-top:10px; font-size:13px;">
+                                <span>Subscription payouts</span>
+                                <span class="green">+$1,842.10</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:13px;">
+                                <span>Programmatic Ad share</span>
+                                <span class="green">+$182.40</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:13px;">
+                                <span>Micro-donation payouts</span>
+                                <span class="green">+$116.00</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm w-full" style="margin-top: 10px;" onclick="alert('Proceeding to Ethereum wallet payout verification... (Simulated)')">Payout Funds</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        function renderPortfolio() {
+            const grid = document.getElementById("portfolioGrid");
+            grid.innerHTML = "";
+
+            const list = getArticles();
+            const filtered = list.filter(a => a.author === "Dr. Sarah Chen");
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:20px; width:100%;">You have not published any articles yet.</p>`;
+                return;
+            }
+
+            filtered.forEach(art => {
+                const card = document.createElement("div");
+                card.className = "article-card";
+                card.onclick = () => {
+                    window.location.href = `article.html?id=${art.id}`;
+                };
+                card.innerHTML = `
+                    <div class="acard-meta">
+                        <span class="acard-category">${art.category}</span>
+                        <span class="acard-type">${art.type}</span>
+                    </div>
+                    <h3 class="acard-title">${art.title}</h3>
+                    <p class="acard-summary">${art.summary}</p>
+                    <div class="acard-footer" style="font-size: 12px; color: var(--text-muted);">
+                        <span>Views: <strong>${art.likes * 12}</strong></span>
+                        <span>Earnings: <strong class="green">+$${(art.likes * 2.5).toFixed(2)}</strong></span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", renderPortfolio);
+    </script>
+</body>
+</html>

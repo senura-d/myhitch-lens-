@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader Space - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Reader Space</h2>
+                    <p class="view-subtitle">Your personalized feed, bookmarks, and notifications.</p>
+                </div>
+            </div>
+
+            <div class="editor-grid">
+                <div class="editor-workspace" style="display: flex; flex-direction: column; gap: 24px;">
+                    <!-- Bookmarks -->
+                    <div>
+                        <h3 style="font-size: 16px; margin-bottom: 12px; border-bottom:1px solid var(--border-color); padding-bottom:6px;">Saved Articles & Bookmarks</h3>
+                        <div class="queue-list" id="bookmarksContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Followed Authors -->
+                    <div>
+                        <h3 style="font-size: 16px; margin-bottom: 12px; border-bottom:1px solid var(--border-color); padding-bottom:6px; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Followed Vetted Authors</h3>
+                        <div class="queue-list" id="followedAuthorsContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications log -->
+                <div class="editor-ai-sidebar">
+                    <div class="stats-panel">
+                        <h4>Activity Notifications</h4>
+                        <div class="queue-list" id="notificationsContainer" style="max-height: 320px; overflow-y: auto; gap: 8px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        function renderDashboard() {
+            // 1. Render Bookmarks
+            const bContainer = document.getElementById("bookmarksContainer");
+            bContainer.innerHTML = "";
+            const bookmarks = getBookmarks();
+            const list = getArticles();
+            const saved = list.filter(a => bookmarks.includes(a.id));
+
+            if (saved.length === 0) {
+                bContainer.innerHTML = `<p style="font-size:12.5px; color:var(--text-muted); padding:10px;">You have no saved bookmarks.</p>`;
+            } else {
+                saved.forEach(art => {
+                    const row = document.createElement("div");
+                    row.className = "bookmark-row";
+                    row.innerHTML = `
+                        <div class="bookmark-info" onclick="window.location.href='article.html?id=${art.id}'" style="cursor:pointer;">
+                            <span class="bookmark-title">${art.title}</span>
+                            <span class="bookmark-meta">${art.category} • By ${art.author}</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="removeBookmark('${art.id}')">Remove</button>
+                    `;
+                    bContainer.appendChild(row);
+                });
+            }
+
+            // 2. Render Follows
+            const fContainer = document.getElementById("followedAuthorsContainer");
+            fContainer.innerHTML = "";
+            const follows = getFollowed();
+
+            if (follows.length === 0) {
+                fContainer.innerHTML = `<p style="font-size:12.5px; color:var(--text-muted); padding:10px;">You do not follow any authors yet.</p>`;
+            } else {
+                follows.forEach(author => {
+                    const row = document.createElement("div");
+                    row.className = "author-row";
+                    row.innerHTML = `
+                        <div class="author-chip">
+                            <div class="author-avatar" style="background-color: var(--primary-glow); color:var(--primary-color);">${author.charAt(0)}</div>
+                            <div>
+                                <span class="author-name" style="font-size:13.5px; font-weight:600;">${author}</span>
+                                <span class="verified-badge" style="display:block;"><svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 2px;"><polyline points="20 6 9 17 4 12"/></svg> Verified Contributor</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="unfollowAuthor('${author}')">Unfollow</button>
+                    `;
+                    fContainer.appendChild(row);
+                });
+            }
+
+            // 3. Render Notifications
+            const nContainer = document.getElementById("notificationsContainer");
+            nContainer.innerHTML = "";
+            const notifies = getNotifications();
+            
+            notifies.forEach(n => {
+                const item = document.createElement("div");
+                item.className = "notification-item";
+                item.innerHTML = `
+                    <span>${n.text}</span>
+                    <span class="notification-date">${n.date}</span>
+                `;
+                nContainer.appendChild(item);
+            });
+        }
+
+        function removeBookmark(id) {
+            let bookmarks = getBookmarks();
+            bookmarks = bookmarks.filter(b => b !== id);
+            saveBookmarks(bookmarks);
+            renderDashboard();
+        }
+
+        function unfollowAuthor(name) {
+            let follows = getFollowed();
+            follows = follows.filter(f => f !== name);
+            saveFollowed(follows);
+            renderDashboard();
+        }
+
+        window.addEventListener("DOMContentLoaded", renderDashboard);
+    </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governance - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Governance & Copyright Policies</h2>
+                    <p class="view-subtitle">Review peer-vetting guidelines, digital rights parameters, and submit appeals.</p>
+                </div>
+            </div>
+
+            <div class="editor-grid">
+                <!-- Bylaws -->
+                <div class="editor-workspace" style="display:flex; flex-direction:column; gap:24px;">
+                    <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 24px; border-radius: 8px;">
+                        <h3 style="font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Double-Blind Peer Review Policy</h3>
+                        <p style="font-size:13.5px; line-height:1.7; color:var(--text-muted);">To eliminate confirmation bias, MYHitch Lens utilizes double-blind evaluation protocols for research publications. Neither reviewers nor authors are disclosed during validation. Disputes are routed to senior editorial councils.</p>
+                    </div>
+
+                    <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 24px; border-radius: 8px;">
+                        <h3 style="font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-2 2m-7.61 7.61L15.5 7.5m0 0L19 11l3-3-3-3-3.5 3.5"/></svg> DRM Token Cryptographic Rights</h3>
+                        <p style="font-size:13.5px; line-height:1.7; color:var(--text-muted);">Publications are timestamped and minted with decentralized Digital Rights Management (DRM) tokens. This secures metadata, proves authorship timestamps globally, and restricts unlawful scraper extraction.</p>
+                    </div>
+
+                    <!-- Appeals Log -->
+                    <div>
+                        <h3 style="font-size:15px; margin-bottom:12px;">Active Resolution Disputes</h3>
+                        <div class="queue-list" id="appealsContainer" style="gap:10px;">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appeals intake Form -->
+                <div class="editor-ai-sidebar">
+                    <form id="appealForm" class="stats-panel" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
+                        <h4 style="margin-bottom:6px;">Moderator Dispute Appeal</h4>
+                        <p style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">File an appeal regarding rejected drafts, citation flags, or account vetting status.</p>
+                        
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="appealDocId">Article ID / Title</label>
+                            <input type="text" class="form-control-sm" id="appealDocId" placeholder="e.g. rev-1 or Draft Title" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="appealReason">Dispute Reason</label>
+                            <select class="form-control-sm" id="appealReason">
+                                <option value="plagiarism">Inaccurate Plagiarism Flag</option>
+                                <option value="category">Category Reclassification</option>
+                                <option value="editorial">Editorial Bias / Rationale Dispute</option>
+                                <option value="other">Other policy issue</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="appealJustify">Justification details</label>
+                            <textarea class="form-control-sm" id="appealJustify" rows="4" placeholder="Detail citations to support appeal..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm w-full" style="margin-top:10px;">Submit Appeal Ticket</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        function renderAppeals() {
+            const container = document.getElementById("appealsContainer");
+            container.innerHTML = "";
+            const list = getAppeals();
+
+            if (list.length === 0) {
+                container.innerHTML = `<p style="font-size:12.5px; color:var(--text-muted); text-align:center; padding:16px;">No dispute tickets submitted.</p>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "appeals-log-card";
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; font-size:11px; border-bottom:1px solid var(--border-color); padding-bottom:4px;">
+                        <strong>ID Reference: ${item.docId}</strong>
+                        <span class="badge badge-accent" style="padding:1px 6px;">${item.status}</span>
+                    </div>
+                    <span style="font-size:12.5px; font-weight:600; color:var(--text-main); margin-top:4px;">Dispute: ${item.reason}</span>
+                    <p style="font-size:12px; color:var(--text-muted); line-height:1.4;">${item.justify}</p>
+                    <span style="font-size:10px; color:var(--text-muted); text-align:right;">Filed: ${item.date}</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById("appealForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const docId = document.getElementById("appealDocId").value.trim();
+            const reason = document.getElementById("appealReason").value;
+            const justify = document.getElementById("appealJustify").value.trim();
+
+            let list = getAppeals();
+            list.unshift({
+                docId: docId,
+                reason: reason.toUpperCase().split('_').join(' '),
+                justify: justify,
+                date: "Just now",
+                status: "Pending Vetting"
+            });
+            saveAppeals(list);
+
+            // Notify
+            let notifies = getNotifications();
+            notifies.unshift({
+                id: Date.now(),
+                type: "system",
+                date: "Just now",
+                text: `Submitted dispute appeal ticket for "${docId}".`
+            });
+            saveNotifications(notifies);
+
+            document.getElementById("appealDocId").value = "";
+            document.getElementById("appealJustify").value = "";
+
+            renderAppeals();
+            alert(`Dispute appeal ticket successfully registered for: ${docId}.`);
+        });
+
+        window.addEventListener("DOMContentLoaded", renderAppeals);
+    </script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editorial Queue - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar placeholder -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Main Workspace -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Editorial Workflow & Moderation</h2>
+                    <p class="view-subtitle">Review, assign, and schedule articles submitted by authors.</p>
+                </div>
+            </div>
+
+            <div class="workflow-layout">
+                <!-- Queue list left -->
+                <div class="queue-list-container">
+                    <h3>Submitted Pending Reviews</h3>
+                    <div class="queue-list" id="editorialQueueList">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Review panel right -->
+                <div class="review-details-panel" id="reviewDetailPanel">
+                    <div class="empty-review-state">
+                        <p>Select an article from the review queue to moderate.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        let selectedId = null;
+
+        function renderQueue() {
+            const list = document.getElementById("editorialQueueList");
+            list.innerHTML = "";
+            const queue = getQueue();
+
+            if (queue.length === 0) {
+                list.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:32px;">No articles pending vetting.</p>`;
+                document.getElementById("reviewDetailPanel").innerHTML = `
+                    <div class="empty-review-state">
+                        <p>All clear! There are no submissions pending moderation.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            queue.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "queue-item" + (selectedId === item.id ? " active" : "");
+                row.onclick = () => selectQueueItem(item.id);
+                row.innerHTML = `
+                    <div class="q-meta">
+                        <span>${item.category} • ${item.type}</span>
+                        <span>${item.submittedDate.split(' ')[1]}</span>
+                    </div>
+                    <div class="q-title">${item.title}</div>
+                    <div class="q-footer">
+                        <span>By ${item.author}</span>
+                        <span class="ai-score-badge ${item.aiScore > 90 ? 'excellent' : ''}">AI Score: ${item.aiScore}</span>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function selectQueueItem(id) {
+            selectedId = id;
+            renderQueue(); // Refresh highlights
+
+            const queue = getQueue();
+            const item = queue.find(q => q.id === id);
+            if (!item) return;
+
+            const detailPanel = document.getElementById("reviewDetailPanel");
+            detailPanel.innerHTML = `
+                <div class="review-details">
+                    <h3 class="review-doc-title">${item.title}</h3>
+                    
+                    <div class="review-meta-bar">
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <strong>Author:</strong> ${item.author} (${item.authorRank})</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> <strong>Submitted:</strong> ${item.submittedDate}</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> <strong>Category:</strong> ${item.category}</span>
+                    </div>
+
+                    <div class="review-text-preview">${item.content}</div>
+
+                    <div class="ai-quality-report-card">
+                        <h4 style="display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/></svg> AI Automated Review Report</h4>
+                        <div class="ai-checks-list">
+                            <div class="check-item">
+                                <span>Grammar & Plagiarism validation:</span>
+                                <span class="green" style="display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><polyline points="20 6 9 17 4 12"/></svg> Passed (${item.plagiarism})</span>
+                            </div>
+                            <div class="check-item">
+                                <span>Readability Rating:</span>
+                                <span>${item.readability}</span>
+                            </div>
+                            <div class="check-item">
+                                <span>Sentiment Profile:</span>
+                                <span>${item.sentiment}</span>
+                            </div>
+                            <div class="check-item">
+                                <span>Dynamic AI Quality Score:</span>
+                                <span class="green" style="font-weight:700;">${item.aiScore}/100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="moderator-decision-zone">
+                        <div class="form-group">
+                            <label>Moderator Comments / Revision Feedback</label>
+                            <textarea class="form-control feedback-textbox" id="reviewFeedbackText" rows="2" placeholder="Provide guidelines or required revisions for the author..."></textarea>
+                        </div>
+                        
+                        <div class="form-row" style="margin-bottom: 20px;">
+                            <div class="form-group col-6">
+                                <label>Assign Editor</label>
+                                <select class="form-control-sm" id="editorAssignee">
+                                    <option>Editor Sarah Vance</option>
+                                    <option>Assoc. Editor Alex Rostova</option>
+                                    <option>Mod Team Auto</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Schedule Publication Date</label>
+                                <input type="datetime-local" class="form-control-sm" id="pubScheduleDate" value="2026-07-21T10:00">
+                            </div>
+                        </div>
+
+                        <div class="decision-actions">
+                            <button class="btn btn-primary" onclick="approvePublish('${item.id}')">Approve & Publish</button>
+                            <button class="btn btn-secondary" onclick="requestRev('${item.id}')">Request Revisions</button>
+                            <button class="btn btn-secondary" style="color:var(--danger-color); border-color:rgba(239,68,68,0.2);" onclick="rejectSub('${item.id}')">Reject</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function approvePublish(id) {
+            let queue = getQueue();
+            const idx = queue.findIndex(q => q.id === id);
+            if (idx === -1) return;
+
+            const item = queue[idx];
+            const dateInput = document.getElementById("pubScheduleDate").value;
+
+            // Ingest to main feed articles
+            let allArt = getArticles();
+            const newPublished = {
+                id: "art-" + Date.now(),
+                title: item.title,
+                category: item.category,
+                type: item.type,
+                readTime: Math.ceil(item.content.split(' ').length / 150) + " min read",
+                summary: item.content.substring(0, 140) + "...",
+                content: item.content,
+                author: item.author,
+                authorRank: item.authorRank,
+                likes: 0,
+                bookmarks: 0,
+                comments: [],
+                verified: true,
+                date: dateInput.split('T')[0]
+            };
+
+            allArt.unshift(newPublished);
+            saveArticles(allArt);
+
+            // Remove from queue
+            queue.splice(idx, 1);
+            saveQueue(queue);
+
+            // Notify author & reader
+            let notifies = getNotifications();
+            notifies.unshift({
+                id: Date.now(),
+                type: "publish",
+                date: "Just now",
+                text: `Article published: "${item.title}" by ${item.author} is now live.`
+            });
+            saveNotifications(notifies);
+
+            selectedId = null;
+            renderQueue();
+            injectSidebarMenu(); // Refresh queue count badge
+            alert(`"${item.title}" approved and published successfully!`);
+        }
+
+        function requestRev(id) {
+            const feedback = document.getElementById("reviewFeedbackText").value.trim();
+            if (feedback === "") {
+                alert("Please write comments or revisions requirements for the author.");
+                return;
+            }
+
+            let queue = getQueue();
+            const idx = queue.findIndex(q => q.id === id);
+            if (idx === -1) return;
+            const item = queue[idx];
+
+            // Remove
+            queue.splice(idx, 1);
+            saveQueue(queue);
+
+            // Notify
+            let notifies = getNotifications();
+            notifies.unshift({
+                id: Date.now(),
+                type: "system",
+                date: "Just now",
+                text: `Revision requested on "${item.title}": "${feedback}".`
+            });
+            saveNotifications(notifies);
+
+            selectedId = null;
+            renderQueue();
+            injectSidebarMenu();
+            alert("Revisions request registered successfully.");
+        }
+
+        function rejectSub(id) {
+            let queue = getQueue();
+            const idx = queue.findIndex(q => q.id === id);
+            if (idx === -1) return;
+            const item = queue[idx];
+
+            if (confirm(`Reject submission "${item.title}"?`)) {
+                queue.splice(idx, 1);
+                saveQueue(queue);
+
+                let notifies = getNotifications();
+                notifies.unshift({
+                    id: Date.now(),
+                    type: "system",
+                    date: "Just now",
+                    text: `Submission rejected: "${item.title}".`
+                });
+                saveNotifications(notifies);
+
+                selectedId = null;
+                renderQueue();
+                injectSidebarMenu();
+                alert("Submission rejected.");
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", renderQueue);
+    </script>
+</body>
+</html>

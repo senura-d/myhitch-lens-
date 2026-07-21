@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Functions Spec Sheet - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+    <style>
+        .spec-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .spec-card {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all var(--transition-normal);
+            box-shadow: var(--card-shadow);
+            box-sizing: border-box;
+        }
+        .spec-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+        .spec-num {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .spec-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .spec-icon {
+            font-size: 24px;
+        }
+        .spec-list {
+            margin-left: 20px;
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .spec-list li {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        .spec-list li strong {
+            color: var(--text-main);
+        }
+        .workflow-arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .workflow-step-pill {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .workflow-arrow {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    
+    <!-- Navigation -->
+    <header class="landing-header" id="landingHeader">
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer; display: inline-flex; align-items: center;">
+            <img src="public/logo.jpeg" alt="MYHitch Lens" style="height: 80px; max-height: 80px; object-fit: contain; vertical-align: middle; border-radius: 4px;">
+        </div>
+        <nav class="landing-nav">
+            <a href="index.html">Home</a>
+            <a href="features.html">Features</a>
+            <a href="workflow.html">Workflow</a>
+            <a href="functions.html" class="active" style="color: var(--primary-color);">Specs & Functions</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="themeToggleBtn">
+                <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button class="btn btn-secondary" onclick="window.location.href='auth.html?mode=signin'">Sign In</button>
+            <button class="btn btn-primary" onclick="window.location.href='auth.html?mode=signup'">Launch App</button>
+        </div>
+    </header>
+
+    <section class="hero-section" style="background: url('public/functions_hero.jpg') no-repeat right center / cover; border-bottom: 1px solid var(--border-color); padding: 100px 0 80px 0;">
+        <div class="container hero-container">
+            <div class="hero-content" style="text-align: left;">
+                <div class="badge-pill" style="background-color: var(--primary-glow); color: var(--primary-color); border: 1px solid var(--primary-color); padding: 6px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; display: inline-block; margin-bottom: 20px;">Technical Specification Handbook</div>
+                <h1 class="hero-title" style="font-size: 44px; font-weight: 800; color: var(--text-main); margin-bottom: 20px; line-height: 1.2; letter-spacing: -1px; background: none; -webkit-text-fill-color: initial;">Core Platform <span class="hero-accent">Capabilities</span></h1>
+                <p class="hero-subtitle" style="font-size: 16px; color: var(--text-muted); line-height: 1.8; margin-bottom: 30px;">A deep dive into the 12 core requirements, system architectures, and lifecycle operations governing the MYHitch Lens platform.</p>
+                <div class="hero-actions" style="display: flex; gap: 12px;">
+                    <button class="btn btn-primary" onclick="window.location.href='auth.html?mode=signup'">Get Started Today</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='contact.html'">Contact Support</button>
+                </div>
+            </div>
+            <div class="hero-visual" style="opacity: 0; min-height: 350px;"></div>
+        </div>
+    </section>
+    <main class="landing-view">
+        <div class="spec-container">
+            
+
+            <!-- 1. User Management -->
+            <div class="spec-card">
+                <span class="spec-num">01 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>User Management</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">Governs how readers, vetted contributors, and publishers interact with the publishing ecosystem.</p>
+                <ul class="spec-list">
+                    <li><strong>User Registration & Profiles:</strong> Flexible onboarding profiles supporting customized reader interests, author portfolio bios, and corporate publisher listings.</li>
+                    <li><strong>Verified Authors:</strong> Domain experts go through academic and professional vetting checks to earn a verified contribution checkmark badge.</li>
+                    <li><strong>Contributor ranking:</strong> Authors earn score points based on article view counts, positive comment reviews, and validation logs, progressing from Bronze to Silver and Gold status tiers.</li>
+                </ul>
+            </div>
+
+            <!-- 2. Subscription Plans -->
+            <div class="spec-card">
+                <span class="spec-num">02 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Subscription Plans</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">The foundation of the platform's access control and contributor payout monetization engine.</p>
+                <ul class="spec-list">
+                    <li><strong>Reader Subscription ($9.99/mo):</strong> Grants full access to clean publication articles, commenting directories, bookmark folders, and customized alerts.</li>
+                    <li><strong>Author Subscription ($29.99/mo):</strong> Enables verified badge vetting access, full AI assistant checking tools, SEO reports, and access to payout revenue shares.</li>
+                    <li><strong>Corporate Publisher ($199/mo):</strong> Grants access to team collaboration accounts, report publication catalogs, and connected MYHitch procurement links.</li>
+                </ul>
+            </div>
+
+            <!-- 3. Article Submission -->
+            <div class="spec-card">
+                <span class="spec-num">03 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>Article Submission</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">The author's content drafting workspace, supporting diverse media formats.</p>
+                <ul class="spec-list">
+                    <li><strong>Rich Text Editor:</strong> Features formatted structures, blockquotes, code fences, and links.</li>
+                    <li><strong>PDF & Word parser:</strong> Features a drag-and-drop file ingestion module that parses documents, automatically loading titles and drafting text.</li>
+                    <li><strong>Media Attachments:</strong> Full support for embedding infographics, short videos, audio tracks, and PDF research references.</li>
+                </ul>
+            </div>
+
+            <!-- 4. Editorial Workflow -->
+            <div class="spec-card">
+                <span class="spec-num">04 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Editorial Workflow</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">The lifecycle tracking content progress from draft to public availability.</p>
+                <div class="workflow-arrow-container">
+                    <span class="workflow-step-pill">1. Draft Created</span>
+                    <span class="workflow-arrow">→</span>
+                    <span class="workflow-step-pill">2. AI Validation</span>
+                    <span class="workflow-arrow">→</span>
+                    <span class="workflow-step-pill">3. Editorial Queue</span>
+                    <span class="workflow-arrow">→</span>
+                    <span class="workflow-step-pill">4. Scheduled Publish</span>
+                </div>
+                <ul class="spec-list">
+                    <li><strong>Vetted Authors:</strong> Submit draft documents. AI scanning is triggered instantly to ensure plagiarism is below compliance thresholds.</li>
+                    <li><strong>Human Editors:</strong> Reviews drafts, provides feedback, requests revisions, or publishes content.</li>
+                </ul>
+            </div>
+
+            <!-- 5. Editorial Dashboard -->
+            <div class="spec-card">
+                <span class="spec-num">05 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="17" y1="3" x2="17" y2="21"/></svg></span>Editorial Dashboard</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">The control room for moderators and publisher admins to schedule and curate content feeds.</p>
+                <ul class="spec-list">
+                    <li><strong>Review Queue:</strong> A centralized queue listing drafts with automated AI quality checkpoints and assignee selectors.</li>
+                    <li><strong>Scheduling:</strong> Select release dates and times for posts to automate release calendars.</li>
+                    <li><strong>Moderation:</strong> Review reader comment feeds, resolve disputes, and manage compliance flags.</li>
+                </ul>
+            </div>
+
+            <!-- 6. Content Categories -->
+            <div class="spec-card">
+                <span class="spec-num">06 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>Content Categories</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">The taxonomical index organizing publications across 11 key operational sectors.</p>
+                <ul class="spec-list">
+                    <li><strong>Core Sectors:</strong> AI, Supply Chain, Technology, Business, Finance, Healthcare, Education, Travel, Research, Lifestyle, and Community.</li>
+                    <li><strong>Dynamic Filtering:</strong> Allows readers to instantly filter the feed using sector tags or category grid cards.</li>
+                </ul>
+            </div>
+
+            <!-- 7. Revenue Model -->
+            <div class="spec-card">
+                <span class="spec-num">07 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Revenue Model</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">How the ecosystem pays vetting costs and remunerates quality authors.</p>
+                <ul class="spec-list">
+                    <li><strong>Payout Engine:</strong> Direct revenue shares allocated to verified authors based on reading time metrics.</li>
+                    <li><strong>Corporate Reports:</strong> Allows publishers to sell premium industry reports under digital token structures.</li>
+                    <li><strong>Programmatic Ads:</strong> Ad space revenue divided between the platform and content creators.</li>
+                </ul>
+            </div>
+
+            <!-- 8. AI Features -->
+            <div class="spec-card">
+                <span class="spec-num">08 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/></svg></span>AI Features</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">A suite of AI assistants to help format and optimize content.</p>
+                <ul class="spec-list">
+                    <li><strong>Plagiarism Validation:</strong> Semantic pattern checks ensuring high authenticity scores.</li>
+                    <li><strong>Translation & Voice Synthesis:</strong> Multi-language translation matrices and voice narrators translating text to speech.</li>
+                    <li><strong>Summarization:</strong> Abstract summarizer generation to outline key bullet points instantly.</li>
+                </ul>
+            </div>
+
+            <!-- 9. Reader Features -->
+            <div class="spec-card">
+                <span class="spec-num">09 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Reader Features</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">Enhances engagement and personalization for platform subscribers.</p>
+                <ul class="spec-list">
+                    <li><strong>Reading Options:</strong> Bookmarks, Likes, and comment discussions.</li>
+                    <li><strong>Follow Creators:</strong> Follow favorite vetted contributors to populate customized notifications feeds.</li>
+                    <li><strong>Preferences:</strong> Dark Mode toggles for optimal readability.</li>
+                </ul>
+            </div>
+
+            <!-- 10. Analytics -->
+            <div class="spec-card">
+                <span class="spec-num">10 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Analytics</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">Telemetry indicators tracking publication reach and subscriber metrics.</p>
+                <ul class="spec-list">
+                    <li><strong>Views & Read Time:</strong> Tracks individual reading durations and total view graphs.</li>
+                    <li><strong>SVG Dashboards:</strong> Modern line charts and bar distributions tracking performance metrics in real-time.</li>
+                </ul>
+            </div>
+
+            <!-- 11. Governance -->
+            <div class="spec-card">
+                <span class="spec-num">11 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Governance & Policy</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">Maintains credibility, copyrights, and editorial standards.</p>
+                <ul class="spec-list">
+                    <li><strong>Double-Blind peer reviews:</strong> Restricts identity disclosure during publication vetting cycles.</li>
+                    <li><strong>DRM copyright tokens:</strong> Digital rights management keys protecting original texts against scrapers.</li>
+                    <li><strong>Appeals Intake:</strong> Dispute tickets allowing authors to appeal moderator rejections.</li>
+                </ul>
+            </div>
+
+            <!-- 12. MYHitch Integration -->
+            <div class="spec-card">
+                <span class="spec-num">12 / Specification</span>
+                <h3 class="spec-title"><span class="spec-icon"><svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg></span>MYHitch Integrations</h3>
+                <p style="font-size:14.5px; color:var(--text-muted); line-height:1.6;">Connected API modules extending the usefulness of publications.</p>
+                <ul class="spec-list">
+                    <li><strong>Mart procurement links:</strong> Instantly displays physical products or hardware modules mentioned in articles.</li>
+                    <li><strong>JetNRest travel SAF:</strong> Embeds carbon-offset flight search buttons inside travel operations articles.</li>
+                    <li><strong>Consulting Schedulers & Wallet Donations:</strong> Connects scheduling systems and web3 donation micro-grants directly into article footers.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="landing-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4 class="footer-heading">For Readers</h4>
+                <ul class="footer-links">
+                    <li><a href="explore.html">How to read</a></li>
+                    <li><a href="explore.html">Explore Feed</a></li>
+                    <li><a href="pricing.html">Subscription Plans</a></li>
+                    <li><a href="categories.html">Content Categories</a></li>
+                    <li><a href="explore.html">Premium Access</a></li>
+                    <li><a href="reader-dashboard.html">Bookmark Collections</a></li>
+                    <li><a href="reader-dashboard.html">Vetted Creator Feeds</a></li>
+                    <li><a href="reader-dashboard.html">Reader Dashboard</a></li>
+                    <li><a href="explore.html">Community Discussions</a></li>
+                    <li><a href="explore.html">Search Publications</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">For Authors</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">Vetting Requirements</a></li>
+                    <li><a href="author-dashboard.html">Contributor Score Ranks</a></li>
+                    <li><a href="submit.html">Submit an Article</a></li>
+                    <li><a href="submit.html">Ingestion Word/PDF tool</a></li>
+                    <li><a href="submit.html">AI Assistant Suite</a></li>
+                    <li><a href="author-dashboard.html">Author Dashboard Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Help & Support</a></li>
+                    <li><a href="about.html">Success Stories</a></li>
+                    <li><a href="integrations.html">Developer APIs</a></li>
+                    <li><a href="functions.html">System Specifications</a></li>
+                    <li><a href="governance.html">Governance bylaws</a></li>
+                    <li><a href="about.html">Research Guidelines</a></li>
+                    <li><a href="governance.html">Double-Blind Review Policy</a></li>
+                    <li><a href="governance.html">Appeal Intakes Form</a></li>
+                    <li><a href="functions.html">Release Notes</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-heading">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="about.html">Platform Mission</a></li>
+                    <li><a href="about.html">Editorial Integrity Council</a></li>
+                    <li><a href="about.html">Vetting Board members</a></li>
+                    <li><a href="about.html">Careers</a></li>
+                    <li><a href="about.html">Press Releases</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="about.html">Partnerships</a></li>
+                    <li><a href="governance.html">Trust, Safety & Security</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-mid">
+            <div class="footer-socials">
+                <span class="footer-socials-lbl">Follow us</span>
+                <button class="social-icon-btn" onclick="alert('Facebook - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+                </button>
+                <button class="social-icon-btn" onclick="alert('LinkedIn - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                </button>
+                <button class="social-icon-btn" onclick="alert('X - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </button>
+                <button class="social-icon-btn" onclick="alert('YouTube - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.524 3.545 12 3.545 12 3.545s-7.525 0-9.388.51a3.003 3.003 0 0 0-2.11 2.108C0 8.025 0 12 0 12s0 3.975.502 5.837a3.003 3.003 0 0 0 2.11 2.108c1.863.51 9.388.51 9.388.51s7.524 0 9.388-.51a3.003 3.003 0 0 0 2.11-2.108c.502-1.862.502-5.837.502-5.837s0-3.975-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </button>
+                <button class="social-icon-btn" onclick="alert('Instagram - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051C.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                </button>
+                <button class="social-icon-btn" onclick="alert('Reddit - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M24 11.5c0-1.65-1.35-3-3-3-.96 0-1.86.48-2.42 1.24-1.64-1-3.85-1.64-6.29-1.72l1.35-4.24 3.71.79c.04.97.85 1.73 1.85 1.73 1.02 0 1.85-.83 1.85-1.85S20.41 2.8 19.39 2.8c-.85 0-1.57.58-1.78 1.36l-4.11-.88c-.27-.06-.54.1-.63.36l-1.53 4.81c-2.49.07-4.74.72-6.4 1.73-.57-.76-1.47-1.24-2.42-1.24-1.65 0-3 1.35-3 3 0 1.12.61 2.1 1.53 2.62-.06.29-.09.59-.09.9 0 3.99 4.9 7.24 10.95 7.24 6.04 0 10.95-3.25 10.95-7.24 0-.31-.03-.61-.09-.9.92-.52 1.53-1.5 1.53-2.62zm-18.49 1a1.42 1.42 0 0 1 1.42-1.42c.79 0 1.42.64 1.42 1.42 0 .79-.64 1.42-1.42 1.42a1.42 1.42 0 0 1-1.42-1.42zm11.58 5.64c-1.33 1.33-3.85 1.43-4.59 1.43-.75 0-3.27-.1-4.59-1.43-.19-.19-.19-.51 0-.7.19-.19.51-.19.7 0 .99.99 3.01 1.13 3.89 1.13.88 0 2.9-.14 3.89-1.13.19-.19.51-.19.7 0 .2.19.2.51 0 .7zm-.62-4.22c-.79 0-1.42-.64-1.42-1.42 0-.79.64-1.42 1.42-1.42.79 0 1.42.64 1.42 1.42 0 .79-.63 1.42-1.42 1.42z"/></svg>
+                </button>
+            </div>
+
+            <div class="footer-apps">
+                <span class="footer-apps-lbl">Mobile app</span>
+                <button class="app-download-btn" onclick="alert('App Store - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 6px;"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.57 2.95-1.39z"/></svg>
+                    <span style="font-size: 11.5px; font-weight: 600;">Apple Store</span>
+                </button>
+                <button class="app-download-btn" onclick="alert('Google Play - Simulated')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 6px;"><path d="M3.609 1.814L13.78 12 3.609 22.186A2.244 2.244 0 0 1 3 20.556V3.444c0-.665.228-1.265.609-1.63zM14.97 13.19l3.064 3.065L4.858 21.68c.518.256 1.132.228 1.637-.1L18.034 16.26l-3.065-3.07zm4.316-2.437l3.085 1.758a1.085 1.085 0 0 1 0 1.902l-3.085 1.758-3.065-3.064 3.065-3.065zM4.858 2.32l13.176 7.502 3.065-3.065L6.495.42c-.505-.328-1.12-.356-1.637-.1z"/></svg>
+                    <span style="font-size: 11.5px; font-weight: 600;">Google Play</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; 2015 - 2026 MYHitch&reg; Global LLC</span>
+            <div class="footer-bottom-links">
+                <a href="#" onclick="alert('Terms of Service - Simulated')">Terms of Service</a>
+                <a href="#" onclick="alert('Privacy Policy - Simulated')">Privacy Policy</a>
+                <a href="#" onclick="alert('CA Notice at Collection - Simulated')">CA Notice at Collection</a>
+                <a href="#" onclick="alert('Your Privacy Choices - Simulated')" style="display:inline-flex; align-items:center; gap:4px;">Your Privacy Choices <svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><polyline points="9 11 12 14 22 4"/></svg></a>
+                <a href="#" onclick="alert('Accessibility - Simulated')">Accessibility</a>
+                <a href="#" onclick="alert('Sitemap - Simulated')">Sitemap</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GSAP Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <!-- GSAP load animation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Animate Page Hero elements on load
+        gsap.from(".hero-section .badge-pill, .hero-section .hero-title, .hero-section .hero-subtitle, .hero-section .hero-actions, .hero-section .hero-visual", {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power2.out"
+        });
+
+        // Animate each spec card when it enters the viewport
+        gsap.utils.toArray(".spec-card").forEach(card => {
+            gsap.from(card.querySelectorAll(".spec-num, .spec-title, p, .spec-list li"), {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                },
+                opacity: 0,
+                y: 20,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        });    });
+    </script>
+</body>
+</html>

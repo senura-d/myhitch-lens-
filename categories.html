@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - MYHitch Lens</title>
+    <!-- Favicon Icon -->
+    <link rel="icon" href="public/logo.jpeg" type="image/jpeg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body class="light-theme">
+
+    <div class="app-portal">
+        <!-- Sidebar container -->
+        <aside class="app-sidebar" id="sidebarContainer"></aside>
+
+        <!-- Content Area -->
+        <main class="app-content-area">
+            <div class="view-header">
+                <div>
+                    <h2 class="view-title">Content Categories</h2>
+                    <p class="view-subtitle">Select a niche operational sector to explore peer-reviewed works.</p>
+                </div>
+            </div>
+
+            <div class="articles-grid" id="categoriesContainer">
+                <!-- Injected dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Core logic script -->
+    <script src="shared.js?v=6"></script>
+    <script>
+        const categories = [
+            { name: "Business", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`, count: 12, desc: "Market updates, company profiles, and corporate strategy." },
+            { name: "Supply Chain", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><polygon points="12 22.08 12 12 3 6.81 3 16.92 12 22.08"/><polygon points="12 22.08 21 16.92 21 6.81 12 12 12 22.08"/><polygon points="12 12 21 6.81 12 1.58 3 6.81 12 12"/></svg>`, count: 8, desc: "Logistics corridors, fleet telemetry, near-shoring, and risk models." },
+            { name: "Technology", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`, count: 15, desc: "Hardware development, systems architecture, and engineering designs." },
+            { name: "AI", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/></svg>`, count: 24, desc: "Deep learning models, predictive telemetry, LLMs, and quantum networks." },
+            { name: "Healthcare", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`, count: 9, desc: "Telemedicine, data compliance in clinical systems, and bio-tech reports." },
+            { name: "Education", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2.5 3 6 3s6-1 6-3v-5"/></svg>`, count: 6, desc: "E-learning structures, educational accessibility, and academic workflows." },
+            { name: "Travel", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`, count: 5, desc: "Geographic logs, aviation logistics, Sustainable Aviation Fuels (SAF)." },
+            { name: "Finance", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`, count: 14, desc: "Monte Carlo risk estimations, derivatives, and decentralized ledgers." },
+            { name: "Lifestyle", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`, count: 11, desc: "Remote work culture, wellness design, and creative publishing." },
+            { name: "Research", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 22c5.523 0 10-4.477 10-10S15.523 2 10 2 0 6.477 0 12s4.477 10 10 10z"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><circle cx="10" cy="12" r="3"/></svg>`, count: 18, desc: "Academic research papers, laboratory records, and scientific compliance." },
+            { name: "Community", icon: `<svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--primary-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`, count: 21, desc: "Discussions, expert panels, and contributor governance reviews." }
+        ];
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById("categoriesContainer");
+            grid.innerHTML = "";
+
+            categories.forEach(c => {
+                const card = document.createElement("div");
+                card.className = "category-card";
+                card.onclick = () => {
+                    window.location.href = `explore.html?category=${c.name}`;
+                };
+                card.innerHTML = `
+                    <div class="category-card-icon">${c.icon}</div>
+                    <span class="category-card-title">${c.name}</span>
+                    <p class="category-card-desc">${c.desc}</p>
+                    <span class="category-card-count">${c.count} Publications</span>
+                `;
+                grid.appendChild(card);
+            });
+        });
+    </script>
+</body>
+</html>
