@@ -2609,6 +2609,13 @@ input:checked + .slider:before {
     }
 }
 
+/* Ensure hero background positions shift to the left side (white space) on mobile and tablet screens */
+@media (max-width: 1024px) {
+    .hero-section {
+        background-position: left center !important;
+    }
+}
+
 /* Tablet & Mobile Hero layouts */
 @media (max-width: 768px) {
     .hero-container {
